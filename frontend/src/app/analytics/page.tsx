@@ -122,7 +122,7 @@ export default function Analytics() {
                       <Tooltip
                         contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
                         itemStyle={{ color: "#fff" }}
-                        formatter={(value: number) => [`${value}%`, "Importance"]}
+                        formatter={(value: any) => [`${value}%`, "Importance"]}
                       />
                       <Bar dataKey="value" fill="url(#impGrad)" radius={[0, 4, 4, 0]} />
                     </BarChart>
