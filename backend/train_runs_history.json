@@ -1,0 +1,177 @@
+[
+  {
+    "epochs": 100,
+    "lr": 0.005,
+    "timestamp": "2026-06-20 21:07:00",
+    "leaderboard": {
+      "Logistic Regression": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.06410503387451172
+      },
+      "SVM": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.0032949447631835938
+      },
+      "Random Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.05102896690368652
+      },
+      "Neural Network": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.9359149932861328
+      }
+    }
+  },
+  {
+    "epochs": 100,
+    "lr": 0.005,
+    "timestamp": "2026-06-20 21:08:03",
+    "leaderboard": {
+      "Logistic Regression": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.003225088119506836
+      },
+      "SVM": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.0014977455139160156
+      },
+      "Random Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.05067300796508789
+      },
+      "Neural Network": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.03727316856384277
+      }
+    }
+  },
+  {
+    "epochs": 100,
+    "lr": 0.021,
+    "timestamp": "2026-06-20 21:08:06",
+    "leaderboard": {
+      "Logistic Regression": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.0037758350372314453
+      },
+      "SVM": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.0012390613555908203
+      },
+      "Random Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.05622291564941406
+      },
+      "Neural Network": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.03713178634643555
+      }
+    }
+  },
+  {
+    "epochs": 260,
+    "lr": 0.021,
+    "timestamp": "2026-06-20 21:08:11",
+    "leaderboard": {
+      "Logistic Regression": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.004055976867675781
+      },
+      "SVM": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.003070831298828125
+      },
+      "Random Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.06254005432128906
+      },
+      "Neural Network": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.08165407180786133
+      }
+    }
+  },
+  {
+    "epochs": 260,
+    "lr": 0.021,
+    "timestamp": "2026-06-20 21:08:37",
+    "leaderboard": {
+      "Logistic Regression": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.002476930618286133
+      },
+      "SVM": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.001245260238647461
+      },
+      "Random Forest": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.05102992057800293
+      },
+      "Neural Network": {
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "training_time": 0.0851280689239502
+      }
+    }
+  }
+]
