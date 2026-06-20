@@ -269,9 +269,9 @@ export default function Home() {
                     <span>Species Distribution</span>
                     <span className="text-xs font-medium text-emerald-400">Balanced</span>
                   </h3>
-                  <div className="relative flex min-h-0 flex-1 items-center justify-center">
+                  <div className="relative flex min-h-0 flex-1 items-center justify-center min-w-0">
                     {mounted && (
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <PieChart>
                           <Pie data={stats.species} innerRadius={55} outerRadius={75} paddingAngle={5} dataKey="value">
                             {stats.species.map((entry, index) => (
@@ -303,9 +303,9 @@ export default function Home() {
                 {/* Feature Averages Bar Chart */}
                 <div className="glass-card flex h-[320px] flex-col rounded-2xl p-6">
                   <h3 className="mb-4 text-sm font-semibold text-zinc-400">Feature Averages (cm)</h3>
-                  <div className="min-h-0 flex-1">
+                  <div className="min-h-0 flex-1 min-w-0">
                     {mounted && (
-                      <ResponsiveContainer width="100%" height="100%">
+                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                         <BarChart data={stats.feature_averages}>
                           <XAxis dataKey="name" stroke="#52525b" fontSize={11} tickLine={false} />
                           <YAxis stroke="#52525b" fontSize={11} tickLine={false} />

@@ -106,9 +106,9 @@ export default function Analytics() {
               <Layers className="h-4 w-4 text-cyan-400" />
               <span>Feature Importance Ratio (%)</span>
             </h3>
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                   <BarChart data={defaultStats.featureImportance} layout="vertical">
                     <defs>
                       <linearGradient id="impGrad" x1="0" y1="0" x2="1" y2="0">
@@ -135,9 +135,9 @@ export default function Analytics() {
             className="glass-card rounded-2xl p-6 flex flex-col h-[360px]"
           >
             <h3 className="text-sm font-semibold text-zinc-400 mb-4">Species Balance</h3>
-            <div className="flex-1 min-h-0 relative flex items-center justify-center">
+            <div className="flex-1 min-h-0 relative flex items-center justify-center min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                   <PieChart>
                     <Pie
                       data={stats.speciesDistribution}
@@ -182,9 +182,9 @@ export default function Analytics() {
             <h3 className="text-sm font-semibold text-zinc-400 mb-4">
               Clustering: Petal Length vs. Petal Width
             </h3>
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 min-w-0">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                   <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 0 }}>
                     <XAxis type="number" dataKey="x" name="Petal Length" unit="cm" stroke="#52525b" fontSize={11} />
                     <YAxis type="number" dataKey="y" name="Petal Width" unit="cm" stroke="#52525b" fontSize={11} />
