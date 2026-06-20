@@ -106,26 +106,28 @@ export default function Analytics() {
               <Layers className="h-4 w-4 text-cyan-400" />
               <span>Feature Importance Ratio (%)</span>
             </h3>
-            <div className="flex-1 min-h-0 min-w-0">
+            <div className="relative flex-1 min-h-0 w-full">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                  <BarChart data={defaultStats.featureImportance} layout="vertical">
-                    <defs>
-                      <linearGradient id="impGrad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#6366f1" />
-                        <stop offset="100%" stopColor="#06b6d4" />
-                      </linearGradient>
-                    </defs>
-                    <XAxis type="number" stroke="#52525b" fontSize={11} tickLine={false} unit="%" />
-                    <YAxis dataKey="name" type="category" stroke="#52525b" fontSize={11} tickLine={false} width={90} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                      itemStyle={{ color: "#fff" }}
-                      formatter={(value: number) => [`${value}%`, "Importance"]}
-                    />
-                    <Bar dataKey="value" fill="url(#impGrad)" radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <div className="absolute inset-0 w-full h-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={defaultStats.featureImportance} layout="vertical">
+                      <defs>
+                        <linearGradient id="impGrad" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stopColor="#6366f1" />
+                          <stop offset="100%" stopColor="#06b6d4" />
+                        </linearGradient>
+                      </defs>
+                      <XAxis type="number" stroke="#52525b" fontSize={11} tickLine={false} unit="%" />
+                      <YAxis dataKey="name" type="category" stroke="#52525b" fontSize={11} tickLine={false} width={90} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                        itemStyle={{ color: "#fff" }}
+                        formatter={(value: number) => [`${value}%`, "Importance"]}
+                      />
+                      <Bar dataKey="value" fill="url(#impGrad)" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               )}
             </div>
           </motion.div>
@@ -135,27 +137,29 @@ export default function Analytics() {
             className="glass-card rounded-2xl p-6 flex flex-col h-[360px]"
           >
             <h3 className="text-sm font-semibold text-zinc-400 mb-4">Species Balance</h3>
-            <div className="flex-1 min-h-0 relative flex items-center justify-center min-w-0">
+            <div className="relative flex-1 min-h-0 w-full">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                  <PieChart>
-                    <Pie
-                      data={stats.speciesDistribution}
-                      innerRadius={65}
-                      outerRadius={90}
-                      paddingAngle={4}
-                      dataKey="value"
-                    >
-                      {stats.speciesDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                      itemStyle={{ color: "#fff" }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
+                <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={stats.speciesDistribution}
+                        innerRadius={65}
+                        outerRadius={90}
+                        paddingAngle={4}
+                        dataKey="value"
+                      >
+                        {stats.speciesDistribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                        itemStyle={{ color: "#fff" }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
               )}
               <div className="pointer-events-none absolute flex flex-col items-center">
                 <span className="text-[10px] uppercase tracking-widest text-zinc-500">Ratio</span>
@@ -182,24 +186,26 @@ export default function Analytics() {
             <h3 className="text-sm font-semibold text-zinc-400 mb-4">
               Clustering: Petal Length vs. Petal Width
             </h3>
-            <div className="flex-1 min-h-0 min-w-0">
+            <div className="relative flex-1 min-h-0 w-full">
               {mounted && (
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                  <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 0 }}>
-                    <XAxis type="number" dataKey="x" name="Petal Length" unit="cm" stroke="#52525b" fontSize={11} />
-                    <YAxis type="number" dataKey="y" name="Petal Width" unit="cm" stroke="#52525b" fontSize={11} />
-                    <ZAxis type="number" range={[50, 70]} />
-                    <Tooltip
-                      cursor={{ strokeDasharray: "3 3" }}
-                      contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                      itemStyle={{ color: "#fff" }}
-                    />
-                    <Legend verticalAlign="top" height={36} iconType="circle" />
-                    <Scatter name="Setosa" data={stats.scatterData.setosa} fill="#06b6d4" />
-                    <Scatter name="Versicolor" data={stats.scatterData.versicolor} fill="#6366f1" />
-                    <Scatter name="Virginica" data={stats.scatterData.virginica} fill="#a855f7" />
-                  </ScatterChart>
-                </ResponsiveContainer>
+                <div className="absolute inset-0 w-full h-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 0 }}>
+                      <XAxis type="number" dataKey="x" name="Petal Length" unit="cm" stroke="#52525b" fontSize={11} />
+                      <YAxis type="number" dataKey="y" name="Petal Width" unit="cm" stroke="#52525b" fontSize={11} />
+                      <ZAxis type="number" range={[50, 70]} />
+                      <Tooltip
+                        cursor={{ strokeDasharray: "3 3" }}
+                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                        itemStyle={{ color: "#fff" }}
+                      />
+                      <Legend verticalAlign="top" height={36} iconType="circle" />
+                      <Scatter name="Setosa" data={stats.scatterData.setosa} fill="#06b6d4" />
+                      <Scatter name="Versicolor" data={stats.scatterData.versicolor} fill="#6366f1" />
+                      <Scatter name="Virginica" data={stats.scatterData.virginica} fill="#a855f7" />
+                    </ScatterChart>
+                  </ResponsiveContainer>
+                </div>
               )}
             </div>
           </motion.div>

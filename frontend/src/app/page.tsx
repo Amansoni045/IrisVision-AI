@@ -269,21 +269,23 @@ export default function Home() {
                     <span>Species Distribution</span>
                     <span className="text-xs font-medium text-emerald-400">Balanced</span>
                   </h3>
-                  <div className="relative flex min-h-0 flex-1 items-center justify-center min-w-0">
+                  <div className="relative flex-1 min-h-0 w-full">
                     {mounted && (
-                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                        <PieChart>
-                          <Pie data={stats.species} innerRadius={55} outerRadius={75} paddingAngle={5} dataKey="value">
-                            {stats.species.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                            itemStyle={{ color: "#fff" }}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
+                      <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={stats.species} innerRadius={55} outerRadius={75} paddingAngle={5} dataKey="value">
+                              {stats.species.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                              itemStyle={{ color: "#fff" }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
                     )}
                     <div className="pointer-events-none absolute flex flex-col items-center">
                       <span className="text-xs text-zinc-500">Total</span>
@@ -303,21 +305,23 @@ export default function Home() {
                 {/* Feature Averages Bar Chart */}
                 <div className="glass-card flex h-[320px] flex-col rounded-2xl p-6">
                   <h3 className="mb-4 text-sm font-semibold text-zinc-400">Feature Averages (cm)</h3>
-                  <div className="min-h-0 flex-1 min-w-0">
+                  <div className="relative flex-1 min-h-0 w-full">
                     {mounted && (
-                      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                        <BarChart data={stats.feature_averages}>
-                          <XAxis dataKey="name" stroke="#52525b" fontSize={11} tickLine={false} />
-                          <YAxis stroke="#52525b" fontSize={11} tickLine={false} />
-                          <Tooltip
-                            contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                            itemStyle={{ color: "#fff" }}
-                          />
-                          <Bar dataKey="Setosa" fill="#06b6d4" radius={[4, 4, 0, 0]} />
-                          <Bar dataKey="Versicolor" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                          <Bar dataKey="Virginica" fill="#a855f7" radius={[4, 4, 0, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
+                      <div className="absolute inset-0 w-full h-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={stats.feature_averages}>
+                            <XAxis dataKey="name" stroke="#52525b" fontSize={11} tickLine={false} />
+                            <YAxis stroke="#52525b" fontSize={11} tickLine={false} />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                              itemStyle={{ color: "#fff" }}
+                            />
+                            <Bar dataKey="Setosa" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="Versicolor" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="Virginica" fill="#a855f7" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     )}
                   </div>
                 </div>
