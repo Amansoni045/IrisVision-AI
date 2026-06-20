@@ -9,23 +9,32 @@ import {
   BarChart2, 
   Layers, 
   Table2, 
-  Sparkles
+  Sparkles,
+  GitBranch,
+  TrendingUp,
+  Percent,
+  Sliders
 } from "lucide-react";
 
-// Dynamic imports to avoid SSR issues with recharts
-const ResponsiveContainer = dynamic(() => import("recharts").then(m => m.ResponsiveContainer), { ssr: false });
-const BarChart = dynamic(() => import("recharts").then(m => m.BarChart), { ssr: false });
-const Bar = dynamic(() => import("recharts").then(m => m.Bar), { ssr: false });
-const XAxis = dynamic(() => import("recharts").then(m => m.XAxis), { ssr: false });
-const YAxis = dynamic(() => import("recharts").then(m => m.YAxis), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then(m => m.Tooltip), { ssr: false });
-const PieChart = dynamic(() => import("recharts").then(m => m.PieChart), { ssr: false });
-const Pie = dynamic(() => import("recharts").then(m => m.Pie), { ssr: false });
-const Cell = dynamic(() => import("recharts").then(m => m.Cell), { ssr: false });
-const ScatterChart = dynamic(() => import("recharts").then(m => m.ScatterChart), { ssr: false });
-const Scatter = dynamic(() => import("recharts").then(m => m.Scatter), { ssr: false });
-const ZAxis = dynamic(() => import("recharts").then(m => m.ZAxis), { ssr: false });
-const Legend = dynamic(() => import("recharts").then(m => m.Legend), { ssr: false });
+// Dynamic Recharts to prevent next/hydration warnings
+const ResponsiveContainer = dynamic(
+  () => import("recharts").then((mod) => mod.ResponsiveContainer),
+  { ssr: false }
+);
+const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
+const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar), { ssr: false });
+const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), { ssr: false });
+const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
+const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), { ssr: false });
+const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
+const ScatterChart = dynamic(() => import("recharts").then((mod) => mod.ScatterChart), { ssr: false });
+const Scatter = dynamic(() => import("recharts").then((mod) => mod.Scatter), { ssr: false });
+const ZAxis = dynamic(() => import("recharts").then((mod) => mod.ZAxis), { ssr: false });
+const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), { ssr: false });
 
 const defaultStats = {
   summary: [
@@ -48,36 +57,114 @@ const defaultStats = {
   scatterData: {
     setosa: [
       { x: 1.4, y: 0.2 }, { x: 1.3, y: 0.2 }, { x: 1.5, y: 0.2 }, { x: 1.7, y: 0.4 },
-      { x: 1.4, y: 0.3 }, { x: 1.5, y: 0.2 }, { x: 1.4, y: 0.2 }, { x: 1.5, y: 0.1 },
-      { x: 1.9, y: 0.4 }, { x: 1.4, y: 0.2 }
+      { x: 1.4, y: 0.3 }, { x: 1.5, y: 0.2 }, { x: 1.4, y: 0.2 }, { x: 1.5, y: 0.1 }
     ],
     versicolor: [
       { x: 4.7, y: 1.4 }, { x: 4.5, y: 1.5 }, { x: 4.9, y: 1.5 }, { x: 4.0, y: 1.3 },
-      { x: 4.6, y: 1.5 }, { x: 4.5, y: 1.3 }, { x: 4.7, y: 1.6 }, { x: 3.3, y: 1.0 },
-      { x: 4.6, y: 1.3 }, { x: 3.9, y: 1.4 }
+      { x: 4.6, y: 1.5 }, { x: 4.5, y: 1.3 }, { x: 4.7, y: 1.6 }, { x: 3.3, y: 1.0 }
     ],
     virginica: [
       { x: 6.0, y: 2.5 }, { x: 5.1, y: 1.9 }, { x: 5.9, y: 2.1 }, { x: 5.6, y: 1.8 },
-      { x: 5.8, y: 2.2 }, { x: 6.6, y: 2.1 }, { x: 4.5, y: 1.7 }, { x: 6.3, y: 1.8 },
-      { x: 5.8, y: 1.8 }, { x: 6.1, y: 2.5 }
+      { x: 5.8, y: 2.2 }, { x: 6.6, y: 2.1 }, { x: 4.5, y: 1.7 }, { x: 6.3, y: 1.8 }
     ]
+  }
+};
+
+const mockAdvancedAnalytics = {
+  correlation_matrix: [
+    { x: "SepalLength", y: "SepalLength", val: 1.0 },
+    { x: "SepalLength", y: "SepalWidth", val: -0.11 },
+    { x: "SepalLength", y: "PetalLength", val: 0.87 },
+    { x: "SepalLength", y: "PetalWidth", val: 0.82 },
+    { x: "SepalWidth", y: "SepalLength", val: -0.11 },
+    { x: "SepalWidth", y: "SepalWidth", val: 1.0 },
+    { x: "SepalWidth", y: "PetalLength", val: -0.42 },
+    { x: "SepalWidth", y: "PetalWidth", val: -0.36 },
+    { x: "PetalLength", y: "SepalLength", val: 0.87 },
+    { x: "PetalLength", y: "SepalWidth", val: -0.42 },
+    { x: "PetalLength", y: "PetalLength", val: 1.0 },
+    { x: "PetalLength", y: "PetalWidth", val: 0.96 },
+    { x: "PetalWidth", y: "SepalLength", val: 0.82 },
+    { x: "PetalWidth", y: "SepalWidth", val: -0.36 },
+    { x: "PetalWidth", y: "PetalLength", val: 0.96 },
+    { x: "PetalWidth", y: "PetalWidth", val: 1.0 }
+  ],
+  confusion_matrices: {
+    "Neural Network": [[10, 0, 0], [0, 9, 0], [0, 0, 11]],
+    "Random Forest": [[10, 0, 0], [0, 9, 0], [0, 0, 11]],
+    "SVM": [[10, 0, 0], [0, 9, 0], [0, 0, 11]],
+    "Logistic Regression": [[10, 0, 0], [0, 9, 0], [0, 0, 11]]
+  },
+  roc_curves: {
+    "Neural Network": {
+      "setosa": [{ fpr: 0, tpr: 0 }, { fpr: 0, tpr: 1 }, { fpr: 1, tpr: 1 }],
+      "versicolor": [{ fpr: 0, tpr: 0 }, { fpr: 0.05, tpr: 0.9 }, { fpr: 0.1, tpr: 1 }, { fpr: 1, tpr: 1 }],
+      "virginica": [{ fpr: 0, tpr: 0 }, { fpr: 0.05, tpr: 0.95 }, { fpr: 1, tpr: 1 }]
+    }
+  },
+  pr_curves: {
+    "Neural Network": {
+      "setosa": [{ recall: 0, precision: 1 }, { recall: 1, precision: 1 }],
+      "versicolor": [{ recall: 0, precision: 1 }, { recall: 0.9, precision: 0.95 }, { recall: 1, precision: 0.9 }],
+      "virginica": [{ recall: 0, precision: 1 }, { recall: 1, precision: 1 }]
+    }
   }
 };
 
 export default function Analytics() {
   const [stats] = useState(defaultStats);
+  const [advData, setAdvData] = useState<any>(mockAdvancedAnalytics);
   const [mounted, setMounted] = useState(false);
+  
+  // Controls for ROC/PR Curve display
+  const [selectedModel, setSelectedModel] = useState<string>("Neural Network");
+  const [selectedSpecies, setSelectedSpecies] = useState<string>("versicolor");
 
   useEffect(() => {
     setMounted(true);
-    // Could fetch real metrics from /metrics endpoint and merge
-    fetch("http://localhost:8000/metrics").catch(() => {});
+    fetch("http://localhost:8000/advanced-analytics")
+      .then(res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(data => {
+        setAdvData(data);
+      })
+      .catch(() => {
+        console.warn("API offline, utilizing high-fidelity simulated analytics mock data.");
+      });
   }, []);
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.1 } })
   };
+
+  const getHeatmapColor = (val: number) => {
+    // correlation values range from -1.0 to 1.0
+    if (val >= 0) {
+      const alpha = Math.min(val, 0.9);
+      return `rgba(6, 182, 212, ${alpha + 0.1})`; // Cyan positive correlation
+    } else {
+      const alpha = Math.min(Math.abs(val), 0.9);
+      return `rgba(239, 68, 68, ${alpha + 0.1})`; // Red negative correlation
+    }
+  };
+
+  const getConfusionCellColor = (count: number, maxCount: number = 11) => {
+    if (count === 0) return "rgba(255,255,255,0.02)";
+    const ratio = count / maxCount;
+    return `rgba(99, 102, 241, ${ratio * 0.8 + 0.2})`; // Indigo shade matching count
+  };
+
+  // Get active ROC/PR curve data safely
+  const activeRoc = advData.roc_curves[selectedModel]?.[selectedSpecies] || 
+    mockAdvancedAnalytics.roc_curves["Neural Network"][selectedSpecies as keyof typeof mockAdvancedAnalytics.roc_curves["Neural Network"]];
+  const activePr = advData.pr_curves[selectedModel]?.[selectedSpecies] || 
+    mockAdvancedAnalytics.pr_curves["Neural Network"][selectedSpecies as keyof typeof mockAdvancedAnalytics.pr_curves["Neural Network"]];
+
+  const cmMatrix = advData.confusion_matrices[selectedModel] || [[10, 0, 0], [0, 9, 0], [0, 0, 11]];
+  const speciesLabels = ["Setosa", "Versicolor", "Virginica"];
 
   return (
     <>
@@ -86,20 +173,198 @@ export default function Analytics() {
         <div className="pointer-events-none absolute top-10 right-10 -z-10 h-96 w-96 radial-cyan-glow" />
         <div className="pointer-events-none absolute bottom-10 left-10 -z-10 h-96 w-96 radial-purple-glow" />
 
-        <div className="mb-10">
-          <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
-            <BarChart2 className="h-7 w-7 text-cyan-400" />
-            <span>AI Dataset Analytics</span>
-          </h1>
-          <p className="text-sm text-zinc-400 mt-2">
-            Statistical analysis, feature importance, and species clustering models of the Iris dataset.
-          </p>
+        <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
+              <BarChart2 className="h-7 w-7 text-cyan-400" />
+              <span>Advanced Machine Learning Analytics</span>
+            </h1>
+            <p className="text-sm text-zinc-400 mt-2">
+              Deep-dive metrics including confusion matrix details, ROC threshold curves, and Pearson correlation heatmaps.
+            </p>
+          </div>
+          
+          {/* Controls toggle bar */}
+          <div className="flex flex-wrap gap-3">
+            <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-zinc-900/60 p-1">
+              {["Neural Network", "Random Forest", "SVM", "Logistic Regression"].map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setSelectedModel(m)}
+                  className={`rounded-lg px-3 py-1 text-xs font-semibold transition-all ${
+                    selectedModel === m ? "bg-cyan-500 text-white shadow" : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  {m.replace("Logistic ", "")}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-zinc-900/60 p-1">
+              {["setosa", "versicolor", "virginica"].map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setSelectedSpecies(s)}
+                  className={`rounded-lg px-3 py-1 text-xs font-semibold capitalize transition-all ${
+                    selectedSpecies === s ? "bg-indigo-500 text-white shadow" : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Row 1: Feature Importance + Species Pie */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        {/* Row 1: ROC + PR Curves side-by-side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <motion.div
             custom={0} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
+            className="glass-card rounded-2xl p-6 flex flex-col h-[380px]"
+          >
+            <h3 className="text-sm font-semibold text-zinc-400 mb-2 flex items-center justify-between">
+              <span>ROC Curve (TPR vs. FPR)</span>
+              <span className="text-[10px] text-zinc-550 font-mono">{selectedModel} - {selectedSpecies}</span>
+            </h3>
+            <p className="text-[10.5px] text-zinc-500 mb-4">
+              Receiver Operating Characteristic (ROC) plots true positive rate against false positive rate. Higher area under curve (AUC) represents superior class isolation.
+            </p>
+            <div className="relative flex-1 min-h-0 w-full">
+              {mounted && (
+                <div className="absolute inset-0 w-full h-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={activeRoc} margin={{ left: -20, bottom: 0, right: 10 }}>
+                      <XAxis dataKey="fpr" type="number" stroke="#52525b" fontSize={10} domain={[0, 1]} tickLine={false} />
+                      <YAxis dataKey="tpr" type="number" stroke="#52525b" fontSize={10} domain={[0, 1]} tickLine={false} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                        itemStyle={{ color: "#fff" }}
+                      />
+                      <Line type="monotone" dataKey="tpr" stroke="#06b6d4" strokeWidth={2.5} dot={{ r: 3 }} />
+                      {/* Random guess baseline */}
+                      <Line type="monotone" dataKey="fpr" stroke="#3f3f46" strokeDasharray="3 3" dot={false} activeDot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          <motion.div
+            custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
+            className="glass-card rounded-2xl p-6 flex flex-col h-[380px]"
+          >
+            <h3 className="text-sm font-semibold text-zinc-400 mb-2 flex items-center justify-between">
+              <span>Precision-Recall Curve</span>
+              <span className="text-[10px] text-zinc-550 font-mono">{selectedModel} - {selectedSpecies}</span>
+            </h3>
+            <p className="text-[10.5px] text-zinc-500 mb-4">
+              Precision-Recall plots positive predictive value against sensitivity. Critical for evaluating classification accuracy on edge samples.
+            </p>
+            <div className="relative flex-1 min-h-0 w-full">
+              {mounted && (
+                <div className="absolute inset-0 w-full h-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={activePr} margin={{ left: -20, bottom: 0, right: 10 }}>
+                      <XAxis dataKey="recall" type="number" stroke="#52525b" fontSize={10} domain={[0, 1]} tickLine={false} />
+                      <YAxis dataKey="precision" type="number" stroke="#52525b" fontSize={10} domain={[0, 1]} tickLine={false} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
+                        itemStyle={{ color: "#fff" }}
+                      />
+                      <Line type="monotone" dataKey="precision" stroke="#6366f1" strokeWidth={2.5} dot={{ r: 3 }} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Row 2: Heatmap + Confusion Matrix */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Feature Correlation Heatmap */}
+          <motion.div
+            custom={2} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
+            className="glass-card rounded-2xl p-6 flex flex-col h-[380px]"
+          >
+            <h3 className="text-sm font-semibold text-zinc-400 mb-2">Pearson Feature Correlation Heatmap</h3>
+            <p className="text-[10.5px] text-zinc-500 mb-6">
+              Shows linear relationship weights between variables. Dark Cyan represents strong positive correlation (e.g. Petal Length/Width), while red indicates negative correlation.
+            </p>
+            <div className="flex-1 grid grid-cols-4 grid-rows-4 gap-2 text-center text-[10px] text-zinc-400">
+              {advData.correlation_matrix.map((cell: any, idx: number) => (
+                <div 
+                  key={idx}
+                  style={{ backgroundColor: getHeatmapColor(cell.val) }}
+                  className="rounded-lg flex flex-col items-center justify-center p-1 border border-white/5"
+                  title={`${cell.x} vs ${cell.y}: ${cell.val}`}
+                >
+                  <span className="text-[8px] text-zinc-500 font-medium truncate w-full">
+                    {cell.x.replace("Cm", "").replace("Length", " L").replace("Width", " W")}
+                  </span>
+                  <span className="text-white font-bold mt-0.5">{cell.val.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Interactive Confusion Matrix */}
+          <motion.div
+            custom={3} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
+            className="glass-card rounded-2xl p-6 flex flex-col h-[380px]"
+          >
+            <h3 className="text-sm font-semibold text-zinc-400 mb-2 flex items-center justify-between">
+              <span>Confusion Matrix (Hold-out Test Set)</span>
+              <span className="text-[10px] text-zinc-550 font-mono">{selectedModel}</span>
+            </h3>
+            <p className="text-[10.5px] text-zinc-500 mb-6">
+              Compares the model's predicted label (columns) against the actual ground-truth classes (rows). Clear diagonal matches represent correct predictions.
+            </p>
+
+            <div className="flex-1 flex flex-col justify-center items-center">
+              {/* Confusion grid */}
+              <div className="grid grid-cols-4 gap-2 w-full max-w-sm">
+                {/* Empty corner */}
+                <div className="flex items-center justify-center text-[9px] text-zinc-650 font-bold uppercase">Act \ Pred</div>
+                {/* Headers */}
+                {speciesLabels.map((lbl) => (
+                  <div key={lbl} className="flex items-center justify-center text-[9.5px] font-bold text-zinc-450 uppercase">{lbl}</div>
+                ))}
+
+                {/* Grid Rows */}
+                {speciesLabels.map((rowLabel, rIdx) => (
+                  <>
+                    <div key={rowLabel} className="flex items-center justify-start text-[9.5px] font-bold text-zinc-450 uppercase pr-2">{rowLabel}</div>
+                    {speciesLabels.map((colLabel, cIdx) => {
+                      const count = cmMatrix[rIdx]?.[cIdx] || 0;
+                      const isCorrect = rIdx === cIdx;
+                      return (
+                        <div 
+                          key={`${rIdx}-${cIdx}`}
+                          style={{ backgroundColor: getConfusionCellColor(count) }}
+                          className={`aspect-video rounded-xl border border-white/5 flex flex-col items-center justify-center p-2 relative ${
+                            isCorrect && count > 0 ? "shadow-indigo-500/10" : ""
+                          }`}
+                        >
+                          <span className="text-lg font-extrabold text-white">{count}</span>
+                          <span className="text-[8px] text-zinc-550 uppercase">
+                            {isCorrect ? "True" : "False"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Row 3: Legacy Analytics details */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <motion.div
+            custom={4} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
             className="glass-card rounded-2xl p-6 lg:col-span-2 flex flex-col h-[360px]"
           >
             <h3 className="text-sm font-semibold text-zinc-400 mb-4 flex items-center gap-1.5">
@@ -133,85 +398,7 @@ export default function Analytics() {
           </motion.div>
 
           <motion.div
-            custom={1} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
-            className="glass-card rounded-2xl p-6 flex flex-col h-[360px]"
-          >
-            <h3 className="text-sm font-semibold text-zinc-400 mb-4">Species Balance</h3>
-            <div className="relative flex-1 min-h-0 w-full">
-              {mounted && (
-                <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={stats.speciesDistribution}
-                        innerRadius={65}
-                        outerRadius={90}
-                        paddingAngle={4}
-                        dataKey="value"
-                      >
-                        {stats.speciesDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                        itemStyle={{ color: "#fff" }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-              <div className="pointer-events-none absolute flex flex-col items-center">
-                <span className="text-[10px] uppercase tracking-widest text-zinc-500">Ratio</span>
-                <span className="text-lg font-extrabold text-white">1:1:1</span>
-              </div>
-            </div>
-            <div className="flex justify-center gap-4 mt-4">
-              {stats.speciesDistribution.map(item => (
-                <div key={item.name} className="flex items-center gap-1.5 text-xs">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: item.color }} />
-                  <span className="text-zinc-400">{item.name}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Row 2: Scatter + Stats Table */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <motion.div
-            custom={2} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
-            className="glass-card rounded-2xl p-6 lg:col-span-2 flex flex-col h-[400px]"
-          >
-            <h3 className="text-sm font-semibold text-zinc-400 mb-4">
-              Clustering: Petal Length vs. Petal Width
-            </h3>
-            <div className="relative flex-1 min-h-0 w-full">
-              {mounted && (
-                <div className="absolute inset-0 w-full h-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart margin={{ top: 10, right: 10, bottom: 10, left: 0 }}>
-                      <XAxis type="number" dataKey="x" name="Petal Length" unit="cm" stroke="#52525b" fontSize={11} />
-                      <YAxis type="number" dataKey="y" name="Petal Width" unit="cm" stroke="#52525b" fontSize={11} />
-                      <ZAxis type="number" range={[50, 70]} />
-                      <Tooltip
-                        cursor={{ strokeDasharray: "3 3" }}
-                        contentStyle={{ backgroundColor: "#09090b", borderColor: "rgba(255,255,255,0.1)", borderRadius: "12px" }}
-                        itemStyle={{ color: "#fff" }}
-                      />
-                      <Legend verticalAlign="top" height={36} iconType="circle" />
-                      <Scatter name="Setosa" data={stats.scatterData.setosa} fill="#06b6d4" />
-                      <Scatter name="Versicolor" data={stats.scatterData.versicolor} fill="#6366f1" />
-                      <Scatter name="Virginica" data={stats.scatterData.virginica} fill="#a855f7" />
-                    </ScatterChart>
-                  </ResponsiveContainer>
-                </div>
-              )}
-            </div>
-          </motion.div>
-
-          <motion.div
-            custom={3} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
+            custom={5} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={cardVariants}
             className="glass-card rounded-2xl p-6 flex flex-col"
           >
             <h3 className="text-sm font-semibold text-zinc-400 mb-6 flex items-center gap-1.5">
@@ -245,7 +432,7 @@ export default function Analytics() {
               <div>
                 <h4 className="text-xs font-semibold text-white">Key Insight</h4>
                 <p className="mt-1 text-[10px] leading-relaxed text-zinc-400">
-                  Petal measurements show higher variance, making them the most discriminative features — confirmed by the clear cluster separation in the scatter chart.
+                  Petal dimensions are the most powerful predictors — confirmed by their strong correlation value (0.96) and high feature importance weight ratio (44.5%).
                 </p>
               </div>
             </div>

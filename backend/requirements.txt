@@ -5,3 +5,6 @@ scikit-learn
 pandas
 joblib
 pydantic
+shap
+reportlab
+matplotlib

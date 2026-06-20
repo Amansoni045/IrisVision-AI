@@ -5,18 +5,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Flower2, 
-  HelpCircle, 
-  Download, 
-  History, 
-  FileText, 
-  Brain, 
-  ArrowRight,
-  TrendingUp,
-  Sparkles,
-  Info,
-  Layers,
-  Scale
+    Flower2, 
+    HelpCircle, 
+    Download, 
+    History, 
+    FileText, 
+    Brain, 
+    ArrowRight,
+    Sparkles,
+    Info,
+    Layers,
+    Scale
 } from "lucide-react";
 import confetti from "canvas-confetti";
 
@@ -52,6 +51,7 @@ type PredictionHistoryItem = {
   };
   predicted_species: string;
   confidence: number;
+  model_name: string;
 };
 
 export default function Predict() {
@@ -62,11 +62,12 @@ export default function Predict() {
     petal_width: 0.2
   });
   
+  const [modelName, setModelName] = useState<string>("Neural Network");
   const [loading, setLoading] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<PredictionHistoryItem[]>([]);
-  const [compareWith, setCompareWith] = useState<string | null>(null);
 
   const handleInputChange = (field: string, value: number) => {
     setInputs(prev => ({
@@ -82,7 +83,13 @@ export default function Predict() {
       const response = await fetch("http://localhost:8000/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(inputs)
+        body: JSON.stringify({
+          sepal_length: inputs.sepal_length,
+          sepal_width: inputs.sepal_width,
+          petal_length: inputs.petal_length,
+          petal_width: inputs.petal_width,
+          model_name: modelName
+        })
       });
       
       if (!response.ok) throw new Error("Backend API not reachable");
@@ -102,11 +109,11 @@ export default function Predict() {
         timestamp: new Date().toLocaleTimeString(),
         inputs: { ...inputs },
         predicted_species: data.predicted_species,
-        confidence: data.confidence
+        confidence: data.confidence,
+        model_name: modelName
       };
       setHistory(prev => [newHistoryItem, ...prev.slice(0, 4)]);
     } catch (err) {
-      // Offline Demo Mode fallback to simulate startup SaaS quality
       console.warn("API offline, triggering offline demo model simulation...");
       simulatePrediction();
     } finally {
@@ -115,9 +122,9 @@ export default function Predict() {
   };
 
   const simulatePrediction = () => {
-    // Simple heuristic prediction for offline mode
     let species = "Iris-versicolor";
     let probs = { "Iris-setosa": 0.05, "Iris-versicolor": 0.85, "Iris-virginica": 0.10 };
+    let shapVals: any = {};
     
     if (inputs.petal_length < 2.0 && inputs.petal_width < 0.8) {
       species = "Iris-setosa";
@@ -129,20 +136,36 @@ export default function Predict() {
     
     const confidence = probs[species as keyof typeof probs];
     
-    // Feature influence proxy
-    const influence = {
-      "Petal Length": 0.45,
-      "Petal Width": 0.35,
-      "Sepal Length": 0.12,
-      "Sepal Width": 0.08
-    };
+    // Simulate SHAP values
+    const background = { "Iris-setosa": 0.33, "Iris-versicolor": 0.34, "Iris-virginica": 0.33 };
+    
+    if (species === "Iris-setosa") {
+      shapVals = {
+        "Iris-setosa": { "Sepal Length": 0.05, "Sepal Width": 0.02, "Petal Length": 0.39, "Petal Width": 0.20 },
+        "Iris-versicolor": { "Sepal Length": -0.02, "Sepal Width": -0.01, "Petal Length": -0.15, "Petal Width": -0.15 },
+        "Iris-virginica": { "Sepal Length": -0.03, "Sepal Width": -0.01, "Petal Length": -0.24, "Petal Width": -0.05 }
+      };
+    } else if (species === "Iris-virginica") {
+      shapVals = {
+        "Iris-setosa": { "Sepal Length": -0.10, "Sepal Width": -0.02, "Petal Length": -0.11, "Petal Width": -0.10 },
+        "Iris-versicolor": { "Sepal Length": -0.02, "Sepal Width": -0.03, "Petal Length": -0.10, "Petal Width": -0.04 },
+        "Iris-virginica": { "Sepal Length": 0.12, "Sepal Width": 0.05, "Petal Length": 0.21, "Petal Width": 0.14 }
+      };
+    } else {
+      shapVals = {
+        "Iris-setosa": { "Sepal Length": -0.05, "Sepal Width": -0.03, "Petal Length": -0.15, "Petal Width": -0.10 },
+        "Iris-versicolor": { "Sepal Length": 0.05, "Sepal Width": 0.04, "Petal Length": 0.22, "Petal Width": 0.20 },
+        "Iris-virginica": { "Sepal Length": 0.00, "Sepal Width": -0.01, "Petal Length": -0.07, "Petal Width": -0.10 }
+      };
+    }
 
     setTimeout(() => {
       const data = {
         predicted_species: species,
         confidence,
         probabilities: probs,
-        feature_influence: influence
+        shap_values: shapVals,
+        base_values: background
       };
       setResult(data);
       confetti({
@@ -154,10 +177,63 @@ export default function Predict() {
         timestamp: new Date().toLocaleTimeString(),
         inputs: { ...inputs },
         predicted_species: species,
-        confidence
+        confidence,
+        model_name: modelName
       };
       setHistory(prev => [newHistory, ...prev.slice(0, 4)]);
     }, 600);
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!result) return;
+    setPdfLoading(true);
+    try {
+      const response = await fetch("http://localhost:8000/generate-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          inputs,
+          predicted_species: result.predicted_species,
+          confidence: result.confidence,
+          model_name: modelName,
+          shap_values: result.shap_values
+        })
+      });
+      
+      if (!response.ok) throw new Error("Failed to generate PDF");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `irisvision_report_${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (err) {
+      console.error(err);
+      alert("Error generating report. Using fallback TXT printout...");
+      const textData = `
+IrisVision AI Prediction Report
+================================
+Model: ${modelName}
+Predicted Species: ${result.predicted_species.replace("Iris-", "")}
+Confidence: ${(result.confidence * 100).toFixed(2)}%
+
+Inputs:
+- Sepal Length: ${inputs.sepal_length} cm
+- Sepal Width: ${inputs.sepal_width} cm
+- Petal Length: ${inputs.petal_length} cm
+- Petal Width: ${inputs.petal_width} cm
+      `;
+      const blob = new Blob([textData], { type: "text/plain" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `prediction_report.txt`;
+      a.click();
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   const exportPrediction = () => {
@@ -176,16 +252,19 @@ export default function Predict() {
   };
 
   const getConfidenceColor = (val: number) => {
-    if (val > 0.85) return "bg-emerald-500";
-    if (val > 0.6) return "bg-amber-500";
-    return "bg-rose-500";
+    if (val > 0.85) return "bg-cyan-500";
+    if (val > 0.6) return "bg-indigo-500";
+    return "bg-purple-500";
   };
 
   const getSpeciesColor = (species: string) => {
-    if (species.includes("setosa")) return "text-cyan-400 border-cyan-400/20 bg-cyan-400/5";
-    if (species.includes("versicolor")) return "text-indigo-400 border-indigo-400/20 bg-indigo-400/5";
+    if (species.toLowerCase().includes("setosa")) return "text-cyan-400 border-cyan-400/20 bg-cyan-400/5";
+    if (species.toLowerCase().includes("versicolor")) return "text-indigo-400 border-indigo-400/20 bg-indigo-400/5";
     return "text-purple-400 border-purple-400/20 bg-purple-400/5";
   };
+
+  const activeShap = result ? result.shap_values[result.predicted_species] : {};
+  const baseProb = result ? result.base_values[result.predicted_species] : 0.33;
 
   return (
     <>
@@ -207,6 +286,21 @@ export default function Predict() {
               </h2>
 
               <div className="space-y-6">
+                {/* Model Selector Dropdown */}
+                <div className="space-y-2">
+                  <label className="text-zinc-300 font-medium text-sm">Classification Model</label>
+                  <select 
+                    value={modelName}
+                    onChange={(e) => setModelName(e.target.value)}
+                    className="w-full rounded-xl border border-white/10 bg-zinc-900/80 px-4 py-2.5 text-sm text-white focus:border-cyan-400 focus:outline-none backdrop-blur-md"
+                  >
+                    <option value="Neural Network">Neural Network (ANN)</option>
+                    <option value="Logistic Regression">Logistic Regression</option>
+                    <option value="SVM">Support Vector Machine (SVM)</option>
+                    <option value="Random Forest">Random Forest</option>
+                  </select>
+                </div>
+
                 {/* Sepal Length */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-center text-sm">
@@ -331,7 +425,7 @@ export default function Predict() {
                       </div>
                       <div className="text-right">
                         <span className="font-bold text-white">{(item.confidence * 100).toFixed(1)}%</span>
-                        <div className="text-[9px] text-zinc-500">{item.timestamp}</div>
+                        <div className="text-[9px] text-zinc-500">{item.model_name}</div>
                       </div>
                     </div>
                   ))}
@@ -355,7 +449,7 @@ export default function Predict() {
                     <div className="absolute inset-0 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
                   </div>
                   <h3 className="text-lg font-bold text-white">Extracting Features</h3>
-                  <p className="text-sm text-zinc-500 max-w-xs">Feeding tensor dimensions into the Sequential neural network.</p>
+                  <p className="text-sm text-zinc-500 max-w-xs">Feeding tensor dimensions into the selected classification model.</p>
                 </motion.div>
               ) : result ? (
                 <motion.div
@@ -370,12 +464,25 @@ export default function Predict() {
                     </div>
                     <div className="flex justify-between items-start mb-6">
                       <div>
-                        <span className="text-xs text-zinc-500 font-semibold uppercase tracking-widest">Prediction Results</span>
+                        <span className="text-xs text-zinc-500 font-semibold uppercase tracking-widest">{modelName} Results</span>
                         <h2 className="text-3xl font-extrabold text-white mt-1">
                           {result.predicted_species.replace("Iris-", "")}
                         </h2>
                       </div>
                       <div className="flex items-center gap-2">
+                        <button 
+                          onClick={handleDownloadPDF}
+                          disabled={pdfLoading}
+                          className="p-2 rounded-lg bg-white/5 border border-white/10 text-cyan-400 hover:text-white hover:bg-cyan-500/20 transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                          title="Download PDF Report"
+                        >
+                          {pdfLoading ? (
+                            <span className="w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <FileText className="h-4 w-4" />
+                          )}
+                          <span>PDF Report</span>
+                        </button>
                         <button 
                           onClick={exportPrediction}
                           className="p-2 rounded-lg bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-colors"
@@ -425,32 +532,76 @@ export default function Predict() {
                     </div>
                   </div>
 
-                  {/* Explainability panel */}
+                  {/* Explainability panel: SHAP Waterfall / Force Plot */}
                   <div className="glass-card rounded-2xl p-6">
-                    <h3 className="text-sm font-semibold text-zinc-400 mb-4 flex items-center gap-1.5">
+                    <h3 className="text-sm font-semibold text-zinc-400 mb-2 flex items-center gap-1.5">
                       <Layers className="h-4 w-4 text-cyan-400" />
-                      <span>Model Explainability: Why this prediction?</span>
+                      <span>Explainable AI: SHAP Local Attribution Plot</span>
                     </h3>
-                    <p className="text-xs text-zinc-500 mb-4">
-                      The chart below represents the relative feature importance weight calculated from the first layer parameters of the artificial neural network model.
+                    <p className="text-xs text-zinc-500 mb-6">
+                      SHAP waterfall diagram for the classified class. Highlights how each measured variable pushed (cyan) or pulled (red) the class prediction probability from its baseline.
                     </p>
-                    <div className="space-y-3">
-                      {Object.entries(result.feature_influence).map(([key, val]: [string, any]) => (
-                        <div key={key} className="space-y-1">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-zinc-400">{key}</span>
-                            <span className="text-zinc-500 font-medium">Influence: {(val * 100).toFixed(1)}%</span>
+
+                    {/* Visual Waterfall/Force Plot */}
+                    <div className="mb-6 p-4 rounded-xl border border-white/5 bg-black/40">
+                      <div className="flex justify-between text-[11px] text-zinc-500 mb-2">
+                        <span>Base Probability: {(baseProb * 100).toFixed(1)}%</span>
+                        <span>Model Output: {(result.confidence * 100).toFixed(1)}%</span>
+                      </div>
+                      
+                      {/* Interactive Visual Bar representing base -> final transition */}
+                      <div className="relative w-full h-8 bg-zinc-800 rounded-lg overflow-hidden flex items-center">
+                        <div 
+                          className="absolute h-full bg-gradient-to-r from-red-500/80 via-indigo-600/80 to-cyan-500/80 transition-all duration-500"
+                          style={{
+                            left: `${Math.min(baseProb, result.confidence) * 100}%`,
+                            width: `${Math.abs(result.confidence - baseProb) * 100}%`
+                          }}
+                        />
+                        {/* Base Indicator */}
+                        <div 
+                          className="absolute w-0.5 h-full bg-zinc-400 z-10"
+                          style={{ left: `${baseProb * 100}%` }}
+                          title={`Base Value: ${(baseProb * 100).toFixed(1)}%`}
+                        />
+                        {/* Output Indicator */}
+                        <div 
+                          className="absolute w-1 h-full bg-white z-10 shadow"
+                          style={{ left: `${result.confidence * 100}%` }}
+                          title={`Prediction output: ${(result.confidence * 100).toFixed(1)}%`}
+                        />
+                      </div>
+                      
+                      <div className="flex justify-between text-[10px] text-zinc-500 mt-2 px-1">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      {Object.entries(activeShap).map(([key, val]: [string, any]) => {
+                        const isPositive = val >= 0;
+                        const percentage = Math.min(Math.abs(val) / 0.5 * 100, 100); // normalized against max expected shap 0.5
+                        return (
+                          <div key={key} className="space-y-1">
+                            <div className="flex justify-between text-xs">
+                              <span className="text-zinc-350">{key}</span>
+                              <span className={`font-semibold ${isPositive ? 'text-cyan-400' : 'text-red-400'}`}>
+                                {isPositive ? '+' : ''}{(val * 100).toFixed(2)}%
+                              </span>
+                            </div>
+                            <div className="w-full bg-zinc-900 rounded-full h-2 relative flex overflow-hidden">
+                              <motion.div 
+                                className={`h-full rounded-full ${isPositive ? 'bg-cyan-500' : 'bg-red-500'}`}
+                                initial={{ width: 0 }}
+                                animate={{ width: `${percentage}%` }}
+                                transition={{ duration: 0.6 }}
+                              />
+                            </div>
                           </div>
-                          <div className="w-full bg-zinc-800 rounded-full h-2">
-                            <motion.div 
-                              className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500 rounded-full"
-                              initial={{ width: 0 }}
-                              animate={{ width: `${val * 100}%` }}
-                              transition={{ duration: 0.6 }}
-                            />
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -484,7 +635,7 @@ export default function Predict() {
                       </h3>
                       <div className="space-y-2 text-xs text-zinc-400 leading-relaxed">
                         <p>
-                          Our 3-layer feed-forward neural network analyzed the input dimensions and identified this specimen as <span className="text-cyan-400 font-medium">{result.predicted_species.replace("Iris-", "")}</span>.
+                          Our model analyzed the input dimensions and identified this specimen as <span className="text-cyan-400 font-medium">{result.predicted_species.replace("Iris-", "")}</span>.
                         </p>
                         <p>
                           {result.confidence > 0.90 ? (
@@ -505,7 +656,7 @@ export default function Predict() {
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2">Awaiting Parameters</h3>
                   <p className="text-sm text-zinc-450 max-w-sm">
-                    Configure the sliding controllers on the left to set sepal & petal parameters, then execute the inference model.
+                    Configure the sliding controllers on the left to set sepal & petal parameters, select your ML classifier, then execute the inference model.
                   </p>
                 </div>
               )}

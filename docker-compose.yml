@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: irisvision_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Iris.csv:/workspace/Iris.csv
+      # Persist models and runs history
+      - ./backend/lr_model.pkl:/workspace/backend/lr_model.pkl
+      - ./backend/svm_model.pkl:/workspace/backend/svm_model.pkl
+      - ./backend/rf_model.pkl:/workspace/backend/rf_model.pkl
+      - ./backend/model.pt:/workspace/backend/model.pt
+      - ./backend/metrics_cache.pkl:/workspace/backend/metrics_cache.pkl
+      - ./backend/train_runs_history.json:/workspace/backend/train_runs_history.json
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8000
+    container_name: irisvision_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend

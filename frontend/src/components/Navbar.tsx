@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flower2, BarChart2, CheckCircle2, LayoutDashboard } from "lucide-react";
+import { Flower2, BarChart2, CheckCircle2, LayoutDashboard, Brain, Database } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
@@ -11,6 +11,9 @@ export default function Navbar() {
   const navItems = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Classify", href: "/predict", icon: Flower2 },
+    { name: "Leaderboard", href: "/leaderboard", icon: CheckCircle2 },
+    { name: "Training", href: "/train", icon: Brain },
+    { name: "Explorer", href: "/explorer", icon: Database },
     { name: "Analytics", href: "/analytics", icon: BarChart2 },
   ];
 
